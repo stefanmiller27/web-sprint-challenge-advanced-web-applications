@@ -1,15 +1,69 @@
-import React from 'react';
-import styled from 'styled-components';
+import axios from "axios";
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import styled from "styled-components";
 
 const Login = () => {
-    
-    return(<ComponentContainer>
-        <ModalContainer>
-            <h1>Welcome to Blogger Pro</h1>
-            <h2>Please enter your account information.</h2>
-        </ModalContainer>
-    </ComponentContainer>);
-}
+
+    const [cred, setCred] = useState({
+        username: "",
+        password: "",
+        error: false,
+    });
+
+    const { push } = useHistory();
+
+    const handleChange = (e) => {
+        setCred({
+            ...cred,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        axios
+            .post("http://localhost:5000/api/login", cred)
+            .then((res) => {
+                localStorage.setItem("token", res.data.token);
+                push("/view");
+            })
+            .catch((err) => {
+                setCred({
+                    ...cred,
+                    error: err.response.data.error,
+                });
+            });
+    };
+
+    return (
+        <ComponentContainer>
+            <ModalContainer>
+                <h1>Welcome to Blogger Pro</h1>
+                <h2>Please enter your account information.</h2>
+                <form onSubmit={submit}>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        value={cred.username}
+                        onChange={handleChange}
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        value={cred.password}
+                        onChange={handleChange}
+                    />
+                    <button id="submit">Log In</button>
+                    <p id="error">{cred.error}</p>
+                </form>
+            </ModalContainer>
+        </ComponentContainer>
+    );
+};
 
 export default Login;
 
@@ -26,32 +80,32 @@ const ComponentContainer = styled.div`
     justify-content: center;
     align-items: center;
     display:flex;
-`
+`;
 
 const ModalContainer = styled.div`
     width: 500px;
     background: white;
     padding: 2rem;
     text-align: center;
-`
+`;
 
 const Label = styled.label`
     display: block;
     text-align: left;
     font-size: 1.5rem;
-`
+`;
 
 const FormGroup = styled.form`
     padding:1rem;
-`
+`;
 
 const Input = styled.input`
     font-size: 1rem;
     padding: 1rem 0;
     width:100%;
-`
+`;
 
 const Button = styled.button`
     padding:1rem;
     width: 100%;
-`
+`;
