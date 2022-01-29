@@ -24,7 +24,7 @@ const Login = () => {
         e.preventDefault();
 
         axios
-            .post("http://localhost:5000/api/login", cred)
+            .post("http://localhost:9000/api/login", cred)
             .then((res) => {
                 localStorage.setItem("token", res.data.token);
                 push("/view");
